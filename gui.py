@@ -1,6 +1,6 @@
 import tkinter as tk
 from tkinter import messagebox, simpledialog
-from core import generate_key, add_password, retrieve_password, delete_account, list_accounts
+from core import generate_key, add_password, retrieve_password, delete_account, list_accounts, backup_key, restore_key
 from security import check_password_strength
 
 def gui_generate_key():
@@ -43,11 +43,20 @@ def gui_list_accounts():
     else:
         messagebox.showinfo("Stored Accounts", "No accounts stored.")
 
+def gui_backup_key():
+    backup_key()
+    messagebox.showinfo("Backup", "Key has been backed up to secret.key.bak")
+
+def gui_restore_key():
+    restore_key()
+    messagebox.showinfo("Restore", "Backup key restored from secret.key.bak")
+
+
 def main():
     root = tk.Tk()
     root.title("Password Manager")
 
-    btn_generate_key = tk.Button(root, text="Generate Key", command=gui_generate_key)
+    btn_generate_key = tk.Button(root, text="Generate Key", command=generate_key)
     btn_generate_key.pack(pady=5)
 
     btn_add_password = tk.Button(root, text="Add Password", command=gui_add_password)
@@ -61,6 +70,12 @@ def main():
 
     btn_list_accounts = tk.Button(root, text="List Accounts", command=gui_list_accounts)
     btn_list_accounts.pack(pady=5)
+
+    btn_backup_key = tk.Button(root, text="Backup Key", command=gui_backup_key)
+    btn_backup_key.pack(pady=5)
+
+    btn_restore_key = tk.Button(root, text="Restore Key", command=gui_restore_key)
+    btn_restore_key.pack(pady=5)
 
     root.mainloop()
 
