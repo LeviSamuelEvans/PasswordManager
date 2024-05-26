@@ -1,30 +1,42 @@
 import os
 from cryptography.fernet import Fernet
 import json
+from tkinter import messagebox, simpledialog
 
+KEY_FILE = "secret.key"
+BACKUP_KEY_FILE = "secret.key.bak"
+PASSWORD_FILE = "passwords.json"
 
 # generate a key for encryption
 def generate_key():
     """
     Generates a new encryption key and saves it to a file named 'secret.key'.
     """
-    key = Fernet.generate_key()
-    with open("secret.key", "wb") as key_file:
-        key_file.write(key)
+    if os.path.exists(KEY_FILE):
+        response = messagebox.askyesno("Key Exists", "A key already exists. Do you want to overwrite it?")
+        if not response:
+            return
+        os.rename(KEY_FILE, BACKUP_KEY_FILE)
+        messagebox.showinfo("Backup", f"Old key has been backed up to {BACKUP_KEY_FILE}")
 
+    key = Fernet.generate_key()
+    with open(KEY_FILE, "wb") as key_file:
+        key_file.write(key)
+    messagebox.showinfo("Success", "New encryption key generated and saved to secret.key")
+
+def backup_key():
+    if os.path.exists(KEY_FILE):
+        os.rename(KEY_FILE, BACKUP_KEY_FILE)
+        print(f"Old key has been backed up to {BACKUP_KEY_FILE}")
+
+def restore_key():
+    if os.path.exists(BACKUP_KEY_FILE):
+        os.rename(BACKUP_KEY_FILE, KEY_FILE)
+        print(f"Backup key restored from {BACKUP_KEY_FILE}")
 
 # load the encrypted key
 def load_key():
-    """
-    Load the secret key from the file "secret.key".
-
-    Returns
-    -------
-        bytes
-            The secret key as bytes.
-    """
-    return open("secret.key", "rb").read()
-
+    return open(KEY_FILE, "rb").read()
 
 # new password encryption using the key and fernet
 def encrypt_password(password, key):
